@@ -2,6 +2,7 @@ import { t, tl, currentLang } from '../i18n';
 import { visaBulletin, estimatedWaitTimes, historicalEB2India, historicalEB2China } from '../data/visa-bulletin';
 import { countries } from '../data/countries';
 import { saveState, loadState } from '../utils/storage';
+import { renderDisclaimer, activateIcons } from '../utils/ui';
 
 interface BacklogState {
   country: string;
@@ -14,14 +15,6 @@ function getState(): BacklogState {
 
 function setState(s: BacklogState) {
   saveState('backlog', s);
-}
-
-function renderDisclaimer(): string {
-  return `<div class="disclaimer-bar">
-    <i data-lucide="shield" style="width:18px;height:18px;flex-shrink:0"></i>
-    <span>${tl({ en: 'This is for educational purposes only. This is not legal advice. Consult a qualified immigration attorney.', zh: '本工具仅供教育参考，不构成法律建议。请咨询合格的移民律师。' })}</span>
-    <button onclick="this.parentElement.remove()" aria-label="Dismiss"><i data-lucide="x" style="width:16px;height:16px"></i></button>
-  </div>`;
 }
 
 type BacklogCategoryKey = 'india' | 'china' | 'mexico' | 'philippines' | 'row';
@@ -117,7 +110,7 @@ function renderInputSection(container: HTMLElement, state: BacklogState): void {
   </div>
   ${renderDisclaimer()}`;
 
-  (window as any).lucide?.createIcons();
+  activateIcons();
 
   // Bind events
   const countrySelect = document.getElementById('backlog-country') as HTMLSelectElement | null;
@@ -221,9 +214,9 @@ function renderResults(state: BacklogState): void {
         <table class="comparison-table" style="font-size:14px">
           <thead>
             <tr>
-              <th></th>
-              <th>${countryName}</th>
-              <th>${tl({ en: 'Rest of World', zh: '其他国家' })}</th>
+              <th scope="col"></th>
+              <th scope="col">${countryName}</th>
+              <th scope="col">${tl({ en: 'Rest of World', zh: '其他国家' })}</th>
             </tr>
           </thead>
           <tbody>
@@ -263,9 +256,9 @@ function renderResults(state: BacklogState): void {
         <table class="comparison-table" style="font-size:14px">
           <thead>
             <tr>
-              <th>${tl({ en: 'Bulletin Date', zh: '排期月份' })}</th>
-              <th>${tl({ en: 'Final Action Date', zh: '最终行动日期' })}</th>
-              <th>${tl({ en: 'Backlog', zh: '积压时间' })}</th>
+              <th scope="col">${tl({ en: 'Bulletin Date', zh: '排期月份' })}</th>
+              <th scope="col">${tl({ en: 'Final Action Date', zh: '最终行动日期' })}</th>
+              <th scope="col">${tl({ en: 'Backlog', zh: '积压时间' })}</th>
             </tr>
           </thead>
           <tbody>
@@ -358,7 +351,7 @@ function renderResults(state: BacklogState): void {
     </p>`;
 
   resultsContainer.innerHTML = `<div class="fade-in">${html}</div>`;
-  (window as any).lucide?.createIcons();
+  activateIcons();
 }
 
 export function renderBacklog(container: HTMLElement): void {

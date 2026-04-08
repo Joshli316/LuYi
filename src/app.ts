@@ -6,6 +6,7 @@
 import { routes, navigate, getCurrentRoute, initRouter } from './utils/router';
 import { saveState, loadState } from './utils/storage';
 import { currentLang, setLang, t } from './i18n';
+import { activateIcons } from './utils/ui';
 
 // Tool render functions
 import { renderPathway } from './tools/pathway';
@@ -70,7 +71,7 @@ function updateDarkModeIcon(): void {
   const isDark = document.documentElement.classList.contains('dark');
   btn.innerHTML = `<i data-lucide="${isDark ? 'sun' : 'moon'}" style="width: 20px; height: 20px;"></i>`;
   btn.setAttribute('aria-label', t('darkMode.toggle'));
-  (window as any).lucide?.createIcons();
+  activateIcons();
 }
 
 // ---------------------------------------------------------------------------
@@ -166,7 +167,7 @@ function renderShell(): void {
   document.getElementById('dark-mode-btn')?.addEventListener('click', toggleDarkMode);
 
   // Activate Lucide icons in shell
-  (window as any).lucide?.createIcons();
+  activateIcons();
 }
 
 // ---------------------------------------------------------------------------
@@ -256,7 +257,7 @@ function renderHome(): void {
   }
 
   updateMobileNavActive();
-  (window as any).lucide?.createIcons();
+  activateIcons();
 }
 
 // ---------------------------------------------------------------------------

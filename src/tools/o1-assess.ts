@@ -1,6 +1,7 @@
 import { t, tl, currentLang } from '../i18n';
 import { o1Criteria } from '../data/o1-criteria';
 import { saveState, loadState } from '../utils/storage';
+import { renderDisclaimer, activateIcons } from '../utils/ui';
 
 type Answer = 'yes' | 'partially' | 'no';
 
@@ -17,14 +18,6 @@ function getState(): AssessState {
 
 function setState(s: AssessState) {
   saveState(STORAGE_KEY, s);
-}
-
-function renderDisclaimer(): string {
-  return `<div class="disclaimer-bar">
-    <i data-lucide="shield" style="width:18px;height:18px;flex-shrink:0"></i>
-    <span>${tl({ en: 'This is for educational purposes only. This is not legal advice. Consult a qualified immigration attorney.', zh: '本工具仅供教育参考，不构成法律建议。请咨询合格的移民律师。' })}</span>
-    <button onclick="this.parentElement.remove()" aria-label="Dismiss"><i data-lucide="x" style="width:16px;height:16px"></i></button>
-  </div>`;
 }
 
 function renderProgressBar(step: number, total: number): string {
@@ -138,7 +131,7 @@ function renderCriterion(container: HTMLElement, state: AssessState) {
     </div>
   </div>`;
 
-  (window as any).lucide?.createIcons();
+  activateIcons();
 
   // Bind answer buttons
   container.querySelectorAll('.answer-btn').forEach(btn => {
@@ -310,7 +303,7 @@ function renderResults(container: HTMLElement, state: AssessState) {
   </div>
   ${renderDisclaimer()}`;
 
-  (window as any).lucide?.createIcons();
+  activateIcons();
 
   document.getElementById('restart-btn')?.addEventListener('click', () => {
     const fresh: AssessState = { step: 0, answers: {} };

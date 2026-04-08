@@ -1,13 +1,6 @@
 import { t, tl, currentLang } from '../i18n';
 import { ebCategories } from '../data/eb-categories';
-
-function renderDisclaimer(): string {
-  return `<div class="disclaimer-bar">
-    <i data-lucide="shield" style="width:18px;height:18px;flex-shrink:0"></i>
-    <span>${tl({ en: 'This is for educational purposes only. This is not legal advice. Consult a qualified immigration attorney.', zh: '本工具仅供教育参考，不构成法律建议。请咨询合格的移民律师。' })}</span>
-    <button onclick="this.parentElement.remove()" aria-label="Dismiss"><i data-lucide="x" style="width:16px;height:16px"></i></button>
-  </div>`;
-}
+import { renderDisclaimer, activateIcons } from '../utils/ui';
 
 function yesNo(val: boolean, favorable: boolean): string {
   const label = val
@@ -75,8 +68,8 @@ export function renderEBCompare(container: HTMLElement): void {
   ];
 
   const tableHeaderHtml = `<tr>
-    <th style="min-width:140px">${tl({ en: 'Feature', zh: '特征' })}</th>
-    ${shortNames.map(name => `<th style="min-width:140px">${name}</th>`).join('')}
+    <th scope="col" style="min-width:140px">${tl({ en: 'Feature', zh: '特征' })}</th>
+    ${shortNames.map(name => `<th scope="col" style="min-width:140px">${name}</th>`).join('')}
   </tr>`;
 
   const tableBodyHtml = rows.map(row => `<tr>
@@ -202,7 +195,7 @@ export function renderEBCompare(container: HTMLElement): void {
   </div>
   ${renderDisclaimer()}`;
 
-  (window as any).lucide?.createIcons();
+  activateIcons();
 
   // Handle detail chevron rotation on toggle
   container.querySelectorAll('details').forEach(detail => {

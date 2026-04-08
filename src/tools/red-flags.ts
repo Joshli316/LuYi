@@ -1,12 +1,5 @@
 import { t, tl, currentLang } from '../i18n';
-
-function renderDisclaimer(): string {
-  return `<div class="disclaimer-bar">
-    <i data-lucide="shield" style="width:18px;height:18px;flex-shrink:0"></i>
-    <span>${tl({en:'This is for educational purposes only. This is not legal advice. Consult a qualified immigration attorney.',zh:'本工具仅供教育参考，不构成法律建议。请咨询合格的移民律师。'})}</span>
-    <button onclick="this.parentElement.remove()" aria-label="Dismiss"><i data-lucide="x" style="width:16px;height:16px"></i></button>
-  </div>`;
-}
+import { renderDisclaimer, activateIcons } from '../utils/ui';
 
 interface ScamCategory {
   icon: string;
@@ -611,9 +604,9 @@ export function renderRedFlags(container: HTMLElement): void {
           <table class="comparison-table">
             <thead>
               <tr>
-                <th>${tl({ en: 'Agency', zh: '机构' })}</th>
-                <th>${tl({ en: 'What to Report', zh: '举报内容' })}</th>
-                <th>${tl({ en: 'How to Report', zh: '举报方式' })}</th>
+                <th scope="col">${tl({ en: 'Agency', zh: '机构' })}</th>
+                <th scope="col">${tl({ en: 'What to Report', zh: '举报内容' })}</th>
+                <th scope="col">${tl({ en: 'How to Report', zh: '举报方式' })}</th>
               </tr>
             </thead>
             <tbody>
@@ -639,7 +632,7 @@ export function renderRedFlags(container: HTMLElement): void {
     </div>
     ${renderDisclaimer()}`;
 
-    (window as any).lucide?.createIcons();
+    activateIcons();
 
     // Bind detail chevron rotation
     container.querySelectorAll('details').forEach(detail => {
@@ -731,7 +724,7 @@ export function renderRedFlags(container: HTMLElement): void {
         </button>
       </div>`;
 
-    (window as any).lucide?.createIcons();
+    activateIcons();
 
     // Bind next button
     document.getElementById('quiz-next')?.addEventListener('click', () => {

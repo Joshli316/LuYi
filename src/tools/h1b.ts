@@ -1,16 +1,9 @@
 import { t, tl, currentLang } from '../i18n';
 import { h1bRates, wageWeights, h1bCapStructure } from '../data/h1b-rates';
+import { renderDisclaimer, activateIcons } from '../utils/ui';
 
 function fmt(n: number): string {
   return n.toLocaleString('en-US');
-}
-
-function renderDisclaimer(): string {
-  return `<div class="disclaimer-bar">
-    <i data-lucide="shield" style="width:18px;height:18px;flex-shrink:0"></i>
-    <span>${tl({ en: 'This is for educational purposes only. This is not legal advice. Consult a qualified immigration attorney.', zh: '本工具仅供教育参考，不构成法律建议。请咨询合格的移民律师。' })}</span>
-    <button onclick="this.parentElement.remove()" aria-label="Dismiss"><i data-lucide="x" style="width:16px;height:16px"></i></button>
-  </div>`;
 }
 
 function calculate(degree: string, wageLevel: number): { probability: number; message: { en: string; zh: string } } {
@@ -182,11 +175,11 @@ export function renderH1B(container: HTMLElement): void {
           <table class="comparison-table">
             <thead>
               <tr>
-                <th>${tl({ en: 'Fiscal Year', zh: '财年' })}</th>
-                <th>${tl({ en: 'Registrations', zh: '注册数' })}</th>
-                <th>${tl({ en: 'Selections', zh: '中签数' })}</th>
-                <th>${tl({ en: 'Rate', zh: '比率' })}</th>
-                <th>${tl({ en: 'Rounds', zh: '轮次' })}</th>
+                <th scope="col">${tl({ en: 'Fiscal Year', zh: '财年' })}</th>
+                <th scope="col">${tl({ en: 'Registrations', zh: '注册数' })}</th>
+                <th scope="col">${tl({ en: 'Selections', zh: '中签数' })}</th>
+                <th scope="col">${tl({ en: 'Rate', zh: '比率' })}</th>
+                <th scope="col">${tl({ en: 'Rounds', zh: '轮次' })}</th>
               </tr>
             </thead>
             <tbody>
@@ -250,7 +243,7 @@ export function renderH1B(container: HTMLElement): void {
     </div>
     ${renderDisclaimer()}`;
 
-    (window as any).lucide?.createIcons();
+    activateIcons();
 
     // Bind degree radio buttons
     container.querySelectorAll('input[name="degree"]').forEach(radio => {

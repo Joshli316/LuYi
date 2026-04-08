@@ -1,6 +1,7 @@
 import { t, tl, currentLang } from '../i18n';
 import { o1Criteria } from '../data/o1-criteria';
 import { saveState, loadState } from '../utils/storage';
+import { activateIcons } from '../utils/ui';
 
 const STORAGE_KEY = 'o1-builder';
 
@@ -167,7 +168,7 @@ function render(container: HTMLElement, state: BuilderState) {
     </div>
   </div>`;
 
-  (window as any).lucide?.createIcons();
+  activateIcons();
 
   // Bind section toggles
   container.querySelectorAll('.section-toggle').forEach(btn => {

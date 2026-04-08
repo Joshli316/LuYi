@@ -1,5 +1,6 @@
 import { t, tl, currentLang } from '../i18n';
 import { saveState, loadState } from '../utils/storage';
+import { renderDisclaimer, activateIcons } from '../utils/ui';
 
 // ---------------------------------------------------------------------------
 // Types & state
@@ -34,14 +35,6 @@ function setState(s: TimelineState) {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function renderDisclaimer(): string {
-  return `<div class="disclaimer-bar">
-    <i data-lucide="shield" style="width:18px;height:18px;flex-shrink:0"></i>
-    <span>${tl({ en: 'This is for educational purposes only. This is not legal advice. Consult a qualified immigration attorney.', zh: '本工具仅供教育参考，不构成法律建议。请咨询合格的移民律师。' })}</span>
-    <button onclick="this.parentElement.remove()" aria-label="Dismiss"><i data-lucide="x" style="width:16px;height:16px"></i></button>
-  </div>`;
-}
 
 function addMonths(dateStr: string, months: number): Date {
   const [y, m] = dateStr.split('-').map(Number);
@@ -281,7 +274,8 @@ function renderForm(container: HTMLElement, state: TimelineState) {
       <!-- Graduation Date -->
       <div style="margin-bottom:20px">
         <label style="display:block;font-weight:600;margin-bottom:8px;font-size:15px">${tl({ en: 'Expected Graduation Date', zh: '预计毕业日期' })}</label>
-        <input type="month" id="tl-grad-date" value="${state.graduationDate}" style="font-size:16px">
+        <input type="month" id="tl-grad-date" value="${state.graduationDate}" min="${new Date().toISOString().slice(0,7)}" style="font-size:16px">
+        <div id="tl-grad-date-error" style="display:none;color:var(--danger);font-size:14px;margin-top:8px"></div>
       </div>
 
       <!-- Year in School -->
@@ -333,7 +327,7 @@ function renderForm(container: HTMLElement, state: TimelineState) {
     </div>
   </div>`;
 
-  (window as any).lucide?.createIcons();
+  activateIcons();
 
   // Bind form inputs
   document.getElementById('tl-grad-date')?.addEventListener('change', (e) => {
@@ -362,10 +356,28 @@ function renderForm(container: HTMLElement, state: TimelineState) {
   // Generate button
   document.getElementById('tl-generate')?.addEventListener('click', () => {
     // Validate required fields
+    // Clear any previous graduation date error
+    const gradError = document.getElementById('tl-grad-date-error');
+    if (gradError) { gradError.style.display = 'none'; gradError.textContent = ''; }
+
     if (!state.graduationDate) {
       alert(tl({ en: 'Please select your graduation date.', zh: '请选择毕业日期。' }));
       return;
     }
+
+    // Validate graduation date is in the future
+    const [gradY, gradM] = state.graduationDate.split('-').map(Number);
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1; // 1-based
+    if (gradY < currentYear || (gradY === currentYear && gradM <= currentMonth)) {
+      if (gradError) {
+        gradError.textContent = tl({ en: 'Graduation date must be in the future.', zh: '毕业日期必须是未来的日期。' });
+        gradError.style.display = 'block';
+      }
+      return;
+    }
+
     if (!state.yearInSchool) {
       alert(tl({ en: 'Please select your current year in school.', zh: '请选择当前年级。' }));
       return;
@@ -492,7 +504,7 @@ function renderResults(container: HTMLElement, state: TimelineState) {
   </div>
   ${renderDisclaimer()}`;
 
-  (window as any).lucide?.createIcons();
+  activateIcons();
 
   document.getElementById('tl-back-btn')?.addEventListener('click', () => {
     state.generated = false;

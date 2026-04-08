@@ -1,16 +1,5 @@
 import { t, tl, currentLang } from '../i18n';
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function renderDisclaimer(): string {
-  return `<div class="disclaimer-bar">
-    <i data-lucide="shield" style="width:18px;height:18px;flex-shrink:0"></i>
-    <span>${tl({ en: 'This is for educational purposes only. This is not legal advice. Consult a qualified immigration attorney.', zh: '本工具仅供教育参考，不构成法律建议。请咨询合格的移民律师。' })}</span>
-    <button onclick="this.parentElement.remove()" aria-label="Dismiss"><i data-lucide="x" style="width:16px;height:16px"></i></button>
-  </div>`;
-}
+import { renderDisclaimer, activateIcons } from '../utils/ui';
 
 // ---------------------------------------------------------------------------
 // Data
@@ -217,9 +206,9 @@ export function renderEmployer(container: HTMLElement): void {
         <table class="comparison-table">
           <thead>
             <tr>
-              <th style="text-align:center;width:60px">${tl({ en: 'Rank', zh: '排名' })}</th>
-              <th>${tl({ en: 'Company', zh: '公司' })}</th>
-              <th style="text-align:right">${tl({ en: 'Approvals', zh: '批准数' })}</th>
+              <th scope="col" style="text-align:center;width:60px">${tl({ en: 'Rank', zh: '排名' })}</th>
+              <th scope="col">${tl({ en: 'Company', zh: '公司' })}</th>
+              <th scope="col" style="text-align:right">${tl({ en: 'Approvals', zh: '批准数' })}</th>
             </tr>
           </thead>
           <tbody>
@@ -237,7 +226,7 @@ export function renderEmployer(container: HTMLElement): void {
   </div>
   ${renderDisclaimer()}`;
 
-  (window as any).lucide?.createIcons();
+  activateIcons();
 
   // Copy All Questions handler
   document.getElementById('copy-all-btn')?.addEventListener('click', () => {
@@ -252,10 +241,10 @@ export function renderEmployer(container: HTMLElement): void {
       const btn = document.getElementById('copy-all-btn');
       if (btn) {
         btn.innerHTML = `<i data-lucide="check" style="width:18px;height:18px"></i> ${tl({ en: 'Copied!', zh: '已复制！' })}`;
-        (window as any).lucide?.createIcons();
+        activateIcons();
         setTimeout(() => {
           btn.innerHTML = `<i data-lucide="copy" style="width:18px;height:18px"></i> ${tl({ en: 'Copy All Questions', zh: '复制所有问题' })}`;
-          (window as any).lucide?.createIcons();
+          activateIcons();
         }, 2000);
       }
     }).catch(() => {
@@ -272,10 +261,10 @@ export function renderEmployer(container: HTMLElement): void {
       const btn = document.getElementById('copy-all-btn');
       if (btn) {
         btn.innerHTML = `<i data-lucide="check" style="width:18px;height:18px"></i> ${tl({ en: 'Copied!', zh: '已复制！' })}`;
-        (window as any).lucide?.createIcons();
+        activateIcons();
         setTimeout(() => {
           btn.innerHTML = `<i data-lucide="copy" style="width:18px;height:18px"></i> ${tl({ en: 'Copy All Questions', zh: '复制所有问题' })}`;
-          (window as any).lucide?.createIcons();
+          activateIcons();
         }, 2000);
       }
     });

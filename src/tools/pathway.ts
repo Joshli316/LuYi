@@ -2,6 +2,7 @@ import { t, tl, currentLang } from '../i18n';
 import { countries } from '../data/countries';
 import { fields } from '../data/fields';
 import { saveState, loadState } from '../utils/storage';
+import { renderDisclaimer, activateIcons } from '../utils/ui';
 
 interface PathwayState {
   step: number;
@@ -41,14 +42,6 @@ const workOptions = [
   { value: 'searching', en: 'Still searching for employment', zh: '还在找工作' },
   { value: 'capExempt', en: 'Working at a university/nonprofit', zh: '在大学/非营利组织工作' },
 ];
-
-function renderDisclaimer(): string {
-  return `<div class="disclaimer-bar">
-    <i data-lucide="shield" style="width:18px;height:18px;flex-shrink:0"></i>
-    <span>${tl({ en: 'This is for educational purposes only. This is not legal advice. Consult a qualified immigration attorney.', zh: '本工具仅供教育参考，不构成法律建议。请咨询合格的移民律师。' })}</span>
-    <button onclick="this.parentElement.remove()" aria-label="Dismiss"><i data-lucide="x" style="width:16px;height:16px"></i></button>
-  </div>`;
-}
 
 function renderProgressBar(step: number, total: number): string {
   const pct = Math.round((step / total) * 100);
@@ -142,7 +135,7 @@ function renderStep(container: HTMLElement, state: PathwayState) {
     </div>
   </div>`;
 
-  (window as any).lucide?.createIcons();
+  activateIcons();
 
   // Bind events
   if (state.step === 1) {
@@ -418,7 +411,7 @@ function renderResults(container: HTMLElement, state: PathwayState) {
   </div>
   ${renderDisclaimer()}`;
 
-  (window as any).lucide?.createIcons();
+  activateIcons();
 
   document.getElementById('restart-btn')?.addEventListener('click', () => {
     setState({ ...defaultState });
