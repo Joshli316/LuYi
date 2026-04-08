@@ -1,0 +1,13 @@
+{
+  "name": "luyi",
+  "version": "1.0.0",
+  "description": "LuYi 路易 — Free bilingual immigration pathway planner",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.0",
+    "typescript": "^6.0.2"
+  }
+}

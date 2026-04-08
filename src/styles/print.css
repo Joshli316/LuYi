@@ -1,0 +1,79 @@
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+
+  header, .tool-nav, .disclaimer-bar, .btn-primary, .btn-ghost,
+  #dark-mode-btn, #lang-toggle-btn, button {
+    display: none !important;
+  }
+
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .result-card {
+    box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  a {
+    color: black !important;
+    text-decoration: underline;
+  }
+
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 10pt;
+    color: #666;
+  }
+
+  a[href^="#"]:after {
+    content: "";
+  }
+
+  .comparison-table-wrapper {
+    overflow: visible !important;
+  }
+
+  .comparison-table {
+    font-size: 10pt;
+  }
+
+  .comparison-table thead th {
+    background: #333 !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .badge-green, .badge-amber, .badge-red {
+    border: 1px solid #999;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .progress-bar {
+    border: 1px solid #ccc;
+  }
+
+  .progress-bar-fill {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  #content {
+    padding: 0 !important;
+  }
+
+  .fade-in {
+    animation: none !important;
+  }
+}
