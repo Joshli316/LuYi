@@ -125,16 +125,18 @@
 
     .card {
       background: var(--surface);
-      border-radius: 16px;
+      border-radius: 12px;
       padding: 24px;
       box-shadow: var(--shadow-sm);
-      transition: transform 200ms ease, box-shadow 200ms ease;
+      transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
       border: 1px solid var(--border);
+      border-left: 3px solid transparent;
     }
 
     .card-hover:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
+      border-left-color: var(--primary);
     }
     .card-hover:focus-visible {
       outline: none;
@@ -337,7 +339,11 @@
 
     summary:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 8px; }
 
+    @media (max-width: 768px) {
+      .tool-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    }
     @media (max-width: 480px) {
+      .tool-grid { grid-template-columns: 1fr !important; }
       .pros-cons-grid { grid-template-columns: 1fr !important; }
     }
 

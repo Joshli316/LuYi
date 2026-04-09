@@ -31,12 +31,6 @@ interface ToolCard {
 }
 
 // ---------------------------------------------------------------------------
-// Cleanup for media query listeners
-// ---------------------------------------------------------------------------
-
-let gridAbortController: AbortController | null = null;
-
-// ---------------------------------------------------------------------------
 // Tool card definitions
 // ---------------------------------------------------------------------------
 
@@ -192,56 +186,93 @@ function renderHome(): void {
   const content = document.getElementById('content');
   if (!content) return;
 
-  const cardsHtml = toolCards.map((card, i) => {
-    const isFeatured = i === 0;
-    const isLast = i === toolCards.length - 1;
-    return `
-    <a href="${card.route}" class="card card-hover${isLast ? ' last-card' : ''}" style="
+  const renderCard = (card: ToolCard) => `
+    <a href="${card.route}" class="card card-hover" style="
       display: flex; flex-direction: column; gap: 12px;
       text-decoration: none; color: inherit; cursor: pointer;
-      ${isFeatured ? 'grid-column: span 2; background: linear-gradient(135deg, var(--primary-light) 0%, var(--surface) 100%); border: 2px solid var(--primary); padding: 28px;' : ''}
     ">
-      <i data-lucide="${card.icon}" style="width: ${isFeatured ? '40' : '32'}px; height: ${isFeatured ? '40' : '32'}px; color: var(--primary);"></i>
-      <h3 style="font-size: ${isFeatured ? '22' : '18'}px; font-weight: ${isFeatured ? '700' : '600'}; margin: 0;">${t(card.nameKey)}</h3>
-      <p style="font-size: ${isFeatured ? '16' : '14'}px; color: var(--text-secondary); margin: 0;">${t(card.descKey)}</p>
-      ${isFeatured ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:600;color:var(--primary);margin-top:4px;">${t('home.startHere')} <i data-lucide="arrow-right" style="width:16px;height:16px;"></i></span>` : ''}
+      <i data-lucide="${card.icon}" style="width: 32px; height: 32px; color: var(--primary);"></i>
+      <h3 style="font-size: 18px; font-weight: 600; margin: 0;">${t(card.nameKey)}</h3>
+      <p style="font-size: 14px; color: var(--text-secondary); margin: 0;">${t(card.descKey)}</p>
     </a>`;
-  }).join('');
+
+  // Group 1: Explore (Pathway, H-1B, O-1 Assess) — first 3
+  // Group 2: Build (O-1 Builder, EB Compare, Backlog) — next 3
+  // Group 3: Plan (Timeline, Employer, Red Flags) — last 3
+  const group1 = toolCards.slice(0, 3).map(renderCard).join('');
+  const group2 = toolCards.slice(3, 6).map(renderCard).join('');
+  const group3 = toolCards.slice(6, 9).map(renderCard).join('');
 
   content.innerHTML = `
     <div class="fade-in">
-      <!-- Hero -->
-      <section style="text-align: center; padding: 48px 20px 32px; position: relative; overflow: hidden;">
-        <svg style="position:absolute;top:-20px;right:-40px;width:200px;height:200px;opacity:0.08;pointer-events:none;" viewBox="0 0 200 200" fill="none">
-          <circle cx="100" cy="100" r="90" stroke="var(--primary)" stroke-width="2" stroke-dasharray="8 6"/>
-          <path d="M100 30 L120 90 L100 75 L80 90 Z" fill="var(--primary)"/>
-          <circle cx="100" cy="100" r="6" fill="var(--primary)"/>
-        </svg>
-        <svg style="position:absolute;bottom:-30px;left:-20px;width:140px;height:140px;opacity:0.06;pointer-events:none;" viewBox="0 0 140 140" fill="none">
-          <circle cx="70" cy="70" r="60" stroke="var(--accent)" stroke-width="2"/>
-          <circle cx="70" cy="70" r="35" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 4"/>
-        </svg>
-        <div style="position: relative; z-index: 1;">
-          <h1 style="font-size: 32px; font-weight: 700; margin-bottom: 8px;">
-            ${t('home.greeting')}
-          </h1>
-          <p style="font-size: 18px; color: var(--text-secondary); max-width: 560px; margin: 0 auto;">
-            ${t('home.subtitle')}
-          </p>
+      <!-- Hero — split layout with visual anchor -->
+      <section style="max-width:960px;margin:0 auto;padding:40px 20px 0;">
+        <div style="display:flex;align-items:center;gap:40px;flex-wrap:wrap;">
+          <!-- Left: text, left-aligned -->
+          <div style="flex:1;min-width:300px;">
+            <p style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--primary);margin:0 0 12px;">
+              ${tl({ en: 'Free Immigration Tools', zh: '免费移民工具' })}
+            </p>
+            <h1 style="font-size:36px;font-weight:700;margin:0 0 16px;line-height:1.2;">
+              ${t('home.greeting')}
+            </h1>
+            <p style="font-size:18px;color:var(--text-secondary);margin:0 0 28px;line-height:1.6;max-width:480px;">
+              ${t('home.subtitle')}
+            </p>
+            <a href="/pathway" class="btn-primary" style="font-size:17px;padding:14px 32px;text-decoration:none;">
+              <i data-lucide="compass" style="width:20px;height:20px;"></i>
+              ${t('home.startHere')}
+            </a>
+          </div>
+          <!-- Right: decorative compass visual -->
+          <div style="flex:0 0 auto;position:relative;width:200px;height:200px;" aria-hidden="true">
+            <svg viewBox="0 0 200 200" fill="none" style="width:100%;height:100%;opacity:0.15;">
+              <circle cx="100" cy="100" r="90" stroke="var(--primary)" stroke-width="2" stroke-dasharray="8 6"/>
+              <circle cx="100" cy="100" r="60" stroke="var(--primary)" stroke-width="1.5"/>
+              <path d="M100 20 L115 90 L100 75 L85 90 Z" fill="var(--primary)"/>
+              <path d="M100 180 L85 110 L100 125 L115 110 Z" fill="var(--accent)" opacity="0.6"/>
+              <circle cx="100" cy="100" r="8" fill="var(--primary)"/>
+              <line x1="100" y1="15" x2="100" y2="40" stroke="var(--primary)" stroke-width="2"/>
+              <line x1="100" y1="160" x2="100" y2="185" stroke="var(--primary)" stroke-width="1.5"/>
+              <line x1="15" y1="100" x2="40" y2="100" stroke="var(--primary)" stroke-width="1.5"/>
+              <line x1="160" y1="100" x2="185" y2="100" stroke="var(--primary)" stroke-width="1.5"/>
+            </svg>
+          </div>
         </div>
       </section>
 
-      <!-- Tool cards grid -->
-      <section style="
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-        max-width: 960px;
-        margin: 0 auto;
-        padding: 0 20px 40px;
-      ">
-        ${cardsHtml}
-      </section>
+      <!-- Tool cards — grouped with varied spacing -->
+      <div style="max-width:960px;margin:0 auto;padding:40px 20px 40px;">
+        <!-- Explore -->
+        <div style="margin-bottom:36px;">
+          <h2 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--primary);margin:0 0 16px;padding-left:2px;">
+            ${tl({ en: 'Explore Your Options', zh: '探索你的选择' })}
+          </h2>
+          <div class="tool-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+            ${group1}
+          </div>
+        </div>
+
+        <!-- Build -->
+        <div style="margin-bottom:36px;">
+          <h2 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--primary);margin:0 0 16px;padding-left:2px;">
+            ${tl({ en: 'Build Your Case', zh: '构建你的申请' })}
+          </h2>
+          <div class="tool-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+            ${group2}
+          </div>
+        </div>
+
+        <!-- Plan -->
+        <div>
+          <h2 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--primary);margin:0 0 16px;padding-left:2px;">
+            ${tl({ en: 'Plan & Protect', zh: '规划与防护' })}
+          </h2>
+          <div class="tool-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+            ${group3}
+          </div>
+        </div>
+      </div>
 
       <!-- Footer -->
       <footer style="
@@ -266,38 +297,6 @@ function renderHome(): void {
       </footer>
     </div>
   `;
-
-  // Responsive grid: 2-col tablet, 1-col mobile
-  const grid = content.querySelector('section:nth-of-type(2)') as HTMLElement | null;
-  if (grid) {
-    // Clean up previous listeners
-    if (gridAbortController) gridAbortController.abort();
-    gridAbortController = new AbortController();
-    const signal = gridAbortController.signal;
-
-    const mq768 = window.matchMedia('(max-width: 768px)');
-    const mq480 = window.matchMedia('(max-width: 480px)');
-    const featuredCard = grid.querySelector('.card:first-child') as HTMLElement | null;
-    const lastCard = grid.querySelector('.last-card') as HTMLElement | null;
-    const applyGrid = () => {
-      if (mq480.matches) {
-        grid.style.gridTemplateColumns = '1fr';
-        if (featuredCard) featuredCard.style.gridColumn = 'span 1';
-        if (lastCard) lastCard.style.gridColumn = 'span 1';
-      } else if (mq768.matches) {
-        grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
-        if (featuredCard) featuredCard.style.gridColumn = 'span 2';
-        if (lastCard) lastCard.style.gridColumn = 'span 1';
-      } else {
-        grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
-        if (featuredCard) featuredCard.style.gridColumn = 'span 2';
-        if (lastCard) lastCard.style.gridColumn = 'span 2';
-      }
-    };
-    applyGrid();
-    mq768.addEventListener('change', applyGrid, { signal });
-    mq480.addEventListener('change', applyGrid, { signal });
-  }
 
   updateMobileNavActive();
   activateIcons();
