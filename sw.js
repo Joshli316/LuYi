@@ -1,9 +1,10 @@
-const CACHE_NAME = 'luyi-v1';
+const CACHE_NAME = 'luyi-v3';
 const ASSETS = [
   '/',
   '/index.html',
-  '/dist/app.js',
-  '/manifest.json'
+  '/app.js',
+  '/manifest.json',
+  '/print.css'
 ];
 
 self.addEventListener('install', e => {

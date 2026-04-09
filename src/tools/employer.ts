@@ -1,5 +1,6 @@
 import { t, tl, currentLang } from '../i18n';
 import { renderDisclaimer, activateIcons } from '../utils/ui';
+import { saveState, loadState } from '../utils/storage';
 
 // ---------------------------------------------------------------------------
 // Data
@@ -106,6 +107,7 @@ function renderQuestionSection(
 
 export function renderEmployer(container: HTMLElement): void {
   const lang = currentLang();
+  const checkedState = loadState<Record<string, boolean>>('employerChecked') ?? {};
 
   const greenFlagItems = greenFlags.map(f => `
     <div class="result-card green" style="padding:14px 18px;margin-bottom:8px">
@@ -135,7 +137,7 @@ export function renderEmployer(container: HTMLElement): void {
 
   container.innerHTML = `<div class="fade-in" style="max-width:640px;margin:0 auto;padding:24px 20px 120px">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
-      <a href="#/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px">
+      <a href="/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px">
         <i data-lucide="arrow-left" style="width:16px;height:16px"></i> ${t('common.backHome')}
       </a>
     </div>
@@ -228,6 +230,16 @@ export function renderEmployer(container: HTMLElement): void {
 
   activateIcons();
 
+  // Restore checkbox state
+  container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    const input = cb as HTMLInputElement;
+    if (checkedState[input.id]) input.checked = true;
+    input.addEventListener('change', () => {
+      checkedState[input.id] = input.checked;
+      saveState('employerChecked', checkedState);
+    });
+  });
+
   // Copy All Questions handler
   document.getElementById('copy-all-btn')?.addEventListener('click', () => {
     const allQuestions = [
@@ -255,12 +267,16 @@ export function renderEmployer(container: HTMLElement): void {
       textarea.style.opacity = '0';
       document.body.appendChild(textarea);
       textarea.select();
-      document.execCommand('copy');
+      const success = document.execCommand('copy');
       document.body.removeChild(textarea);
 
       const btn = document.getElementById('copy-all-btn');
       if (btn) {
-        btn.innerHTML = `<i data-lucide="check" style="width:18px;height:18px"></i> ${tl({ en: 'Copied!', zh: '已复制！' })}`;
+        if (success) {
+          btn.innerHTML = `<i data-lucide="check" style="width:18px;height:18px"></i> ${tl({ en: 'Copied!', zh: '已复制！' })}`;
+        } else {
+          btn.innerHTML = `<i data-lucide="x" style="width:18px;height:18px"></i> ${tl({ en: 'Copy failed — select text manually', zh: '复制失败 — 请手动选择文本' })}`;
+        }
         activateIcons();
         setTimeout(() => {
           btn.innerHTML = `<i data-lucide="copy" style="width:18px;height:18px"></i> ${tl({ en: 'Copy All Questions', zh: '复制所有问题' })}`;

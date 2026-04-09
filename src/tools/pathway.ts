@@ -50,7 +50,7 @@ function renderProgressBar(step: number, total: number): string {
       <span>${tl({ en: `Step ${step} of ${total}`, zh: `第${step}步，共${total}步` })}</span>
       <span>${pct}%</span>
     </div>
-    <div class="progress-bar"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+    <div class="progress-bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="${tl({ en: `Step ${step} of ${total}`, zh: `第${step}步，共${total}步` })}"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
   </div>`;
 }
 
@@ -68,8 +68,8 @@ function renderStep(container: HTMLElement, state: PathwayState) {
     stepHtml = `
       <h2 style="font-size:22px;font-weight:700;margin-bottom:8px">${tl({ en: 'What is your highest degree level?', zh: '你的最高学历是什么？' })}</h2>
       <p style="font-size:14px;color:var(--text-secondary);margin-bottom:20px">${tl({ en: 'This affects your H-1B cap pool and EB category eligibility.', zh: '这会影响你的H-1B配额池和EB类别资格。' })}</p>
-      <div style="display:flex;flex-direction:column;gap:12px">
-        ${opts.map(o => `<button class="card card-hover" data-value="${o.v}" style="text-align:left;cursor:pointer;border:2px solid ${state.degree === o.v ? 'var(--primary)' : 'transparent'};padding:16px 20px;font-size:16px;font-weight:500">
+      <div role="radiogroup" aria-label="${tl({ en: 'Degree level', zh: '学历等级' })}" style="display:flex;flex-direction:column;gap:12px">
+        ${opts.map(o => `<button class="card card-hover" data-value="${o.v}" role="radio" aria-checked="${state.degree === o.v}" style="text-align:left;cursor:pointer;border:2px solid ${state.degree === o.v ? 'var(--primary)' : 'transparent'};padding:16px 20px;font-size:16px;font-weight:500">
           ${lang === 'en' ? o.en : o.zh}
         </button>`).join('')}
       </div>`;
@@ -118,7 +118,7 @@ function renderStep(container: HTMLElement, state: PathwayState) {
 
   container.innerHTML = `<div class="fade-in" style="max-width:640px;margin:0 auto;padding:24px 20px 120px">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
-      <a href="#/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px">
+      <a href="/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px">
         <i data-lucide="arrow-left" style="width:16px;height:16px"></i> ${t('common.backHome')}
       </a>
     </div>
@@ -185,9 +185,21 @@ function renderStep(container: HTMLElement, state: PathwayState) {
   });
 
   document.getElementById('next-btn')?.addEventListener('click', () => {
-    if (state.step === 1 && !state.degree) return;
-    if (state.step === 2 && !state.field) return;
-    if (state.step === 3 && !state.country) return;
+    const showValidation = () => {
+      const existing = container.querySelector('.validation-msg');
+      if (existing) existing.remove();
+      const msg = document.createElement('p');
+      msg.className = 'validation-msg';
+      msg.style.cssText = 'color:var(--danger);font-size:14px;text-align:center;margin-top:12px;animation:fadeIn 150ms ease';
+      msg.textContent = (state.step >= 4)
+        ? tl({ en: 'Please select at least one item to continue.', zh: '请至少选择一项以继续。' })
+        : tl({ en: 'Please select an option to continue.', zh: '请选择一个选项以继续。' });
+      container.querySelector('.card')?.appendChild(msg);
+    };
+    if (state.step === 1 && !state.degree) { showValidation(); return; }
+    if (state.step === 2 && !state.field) { showValidation(); return; }
+    if (state.step === 3 && !state.country) { showValidation(); return; }
+    if (state.step === 4 && state.achievements.length === 0) { showValidation(); return; }
     if (state.step === 5) {
       renderResults(container, state);
     } else {
@@ -373,7 +385,7 @@ function renderResults(container: HTMLElement, state: PathwayState) {
         <h3 style="font-size:18px;font-weight:600;margin:0">${lang === 'en' ? p.name : p.nameZh}</h3>
         ${matchLabel(p.match)}
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div class="pros-cons-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
         <div>
           <h4 style="font-size:13px;font-weight:600;color:var(--success);margin:0 0 6px">${tl({ en: 'Pros', zh: '优势' })}</h4>
           <ul style="margin:0;padding-left:18px;font-size:14px;color:var(--text-secondary)">
@@ -387,15 +399,19 @@ function renderResults(container: HTMLElement, state: PathwayState) {
           </ul>
         </div>
       </div>
-      <a href="#${p.route}" class="btn-primary" style="font-size:14px;padding:8px 16px">
-        ${tl({ en: 'Explore This Option', zh: '探索此选项' })} <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
+      <a href="${p.route}" class="btn-primary" style="font-size:14px;padding:8px 16px;${p.match === 'strong' ? 'background:var(--success)' : p.match === 'weak' ? 'background:var(--text-secondary)' : ''}">
+        ${p.match === 'strong'
+          ? tl({ en: 'Start This Path', zh: '开始这条路径' })
+          : p.match === 'possible'
+            ? tl({ en: 'Learn More', zh: '了解更多' })
+            : tl({ en: 'See Requirements', zh: '查看要求' })} <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
       </a>
     </div>
   `).join('');
 
   container.innerHTML = `<div class="fade-in" style="max-width:720px;margin:0 auto;padding:24px 20px 120px">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
-      <a href="#/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px">
+      <a href="/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px">
         <i data-lucide="arrow-left" style="width:16px;height:16px"></i> ${t('common.backHome')}
       </a>
     </div>

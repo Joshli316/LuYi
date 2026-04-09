@@ -385,6 +385,7 @@ export function renderRedFlags(container: HTMLElement): void {
   let quizIndex = 0;
   let quizScore = 0;
   let quizAnswered = false;
+  let lastAnswerCorrect = false;
 
   function render() {
     // Build scam category cards
@@ -410,7 +411,7 @@ export function renderRedFlags(container: HTMLElement): void {
         <div style="padding:0 20px 20px;border-top:1px solid var(--border)">
           <p style="font-size:14px;color:var(--text-secondary);margin:16px 0;line-height:1.7">${desc}</p>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+          <div class="pros-cons-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
             <div>
               <h4 style="font-size:13px;font-weight:600;color:var(--danger);margin:0 0 8px;display:flex;align-items:center;gap:6px">
                 <i data-lucide="eye" style="width:14px;height:14px"></i>
@@ -503,10 +504,10 @@ export function renderRedFlags(container: HTMLElement): void {
         </div>
       </div>
       ${quizAnswered ? `
-        <div class="result-card ${(quizAnswered && ((document.querySelector('[data-user-answer]') as HTMLElement)?.dataset.userAnswer === 'correct')) ? 'green' : 'red'}" style="padding:16px 20px;margin-bottom:20px" id="quiz-feedback">
+        <div class="result-card ${lastAnswerCorrect ? 'green' : 'red'}" style="padding:16px 20px;margin-bottom:20px" id="quiz-feedback" role="alert">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-            <i data-lucide="${(document.querySelector('[data-user-answer]') as HTMLElement)?.dataset.userAnswer === 'correct' ? 'check-circle' : 'x-circle'}" style="width:20px;height:20px"></i>
-            <span style="font-weight:700;font-size:16px">${(document.querySelector('[data-user-answer]') as HTMLElement)?.dataset.userAnswer === 'correct'
+            <i data-lucide="${lastAnswerCorrect ? 'check-circle' : 'x-circle'}" style="width:20px;height:20px"></i>
+            <span style="font-weight:700;font-size:16px">${lastAnswerCorrect
               ? tl({ en: 'Correct!', zh: '正确！' })
               : tl({ en: 'Incorrect', zh: '不正确' })}</span>
           </div>
@@ -520,12 +521,12 @@ export function renderRedFlags(container: HTMLElement): void {
             <i data-lucide="arrow-right" style="width:16px;height:16px;vertical-align:-3px"></i>
           </button>
         </div>` : `
-        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-          <button class="btn-primary" id="quiz-scam" style="padding:14px 28px;font-size:16px;background:var(--danger)">
+        <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap">
+          <button class="btn-primary" id="quiz-scam" style="padding:14px 32px;font-size:16px;background:var(--danger);min-width:140px">
             <i data-lucide="alert-triangle" style="width:18px;height:18px;vertical-align:-3px"></i>
             ${tl({ en: 'Scam', zh: '骗局' })}
           </button>
-          <button class="btn-primary" id="quiz-legit" style="padding:14px 28px;font-size:16px;background:var(--success)">
+          <button class="btn-primary" id="quiz-legit" style="padding:14px 32px;font-size:16px;background:var(--success);min-width:140px">
             <i data-lucide="check-circle" style="width:18px;height:18px;vertical-align:-3px"></i>
             ${tl({ en: 'Legitimate', zh: '合法' })}
           </button>
@@ -554,7 +555,7 @@ export function renderRedFlags(container: HTMLElement): void {
     }
 
     container.innerHTML = `<div class="fade-in" style="max-width:800px;margin:0 auto;padding:24px 20px 120px">
-      <a href="#/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px;margin-bottom:20px">
+      <a href="/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px;margin-bottom:20px">
         <i data-lucide="arrow-left" style="width:16px;height:16px"></i> ${t('common.backHome')}
       </a>
 
@@ -678,10 +679,12 @@ export function renderRedFlags(container: HTMLElement): void {
   }
 
   function handleQuizAnswer(userSaidScam: boolean) {
+    if (quizAnswered) return;
     const scenario = quizScenarios[quizIndex];
     const isCorrect = userSaidScam === scenario.isScam;
     if (isCorrect) quizScore++;
     quizAnswered = true;
+    lastAnswerCorrect = isCorrect;
 
     // Re-render quiz section only (avoid full page re-render flicker)
     const quizContainer = document.getElementById('quiz-container');
@@ -703,7 +706,7 @@ export function renderRedFlags(container: HTMLElement): void {
           <p style="font-size:16px;line-height:1.6;margin:0;font-weight:500">${currentLang() === 'en' ? scenario.scenario.en : scenario.scenario.zh}</p>
         </div>
       </div>
-      <div class="result-card ${resultClass}" style="padding:16px 20px;margin-bottom:20px">
+      <div class="result-card ${resultClass}" style="padding:16px 20px;margin-bottom:20px" role="alert">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
           <i data-lucide="${isCorrect ? 'check-circle' : 'x-circle'}" style="width:20px;height:20px"></i>
           <span style="font-weight:700;font-size:16px">${isCorrect

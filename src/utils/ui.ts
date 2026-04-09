@@ -4,7 +4,7 @@ import { tl } from '../i18n';
 export function renderDisclaimer(): string {
   return `<div class="disclaimer-bar">
     <i data-lucide="shield" style="width:18px;height:18px;flex-shrink:0"></i>
-    <span>${tl({ en: 'This is for educational purposes only. This is not legal advice. Consult a qualified immigration attorney.', zh: '本工具仅供教育参考，不构成法律建议。请咨询合格的移民律师。' })}</span>
+    <span>${tl({ en: 'For educational purposes only — not legal advice. Always consult a qualified immigration attorney.', zh: '本工具仅供教育参考，不构成法律建议。请咨询合格的移民律师。' })}</span>
     <button onclick="this.parentElement.remove()" aria-label="Dismiss"><i data-lucide="x" style="width:16px;height:16px"></i></button>
   </div>`;
 }

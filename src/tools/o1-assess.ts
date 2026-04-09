@@ -27,7 +27,7 @@ function renderProgressBar(step: number, total: number): string {
       <span>${tl({ en: `Criterion ${step} of ${total}`, zh: `第${step}项，共${total}项` })}</span>
       <span>${pct}%</span>
     </div>
-    <div class="progress-bar"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+    <div class="progress-bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="${tl({ en: `Criterion ${step} of ${total}`, zh: `第${step}项，共${total}项` })}"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
   </div>`;
 }
 
@@ -50,7 +50,7 @@ function renderCriterion(container: HTMLElement, state: AssessState) {
   const weakExamples = lang === 'en' ? criterion.weakExamples : criterion.weakExamplesZh;
 
   container.innerHTML = `<div class="fade-in" style="max-width:640px;margin:0 auto;padding:24px 20px 120px">
-    <a href="#/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px;margin-bottom:20px">
+    <a href="/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px;margin-bottom:20px">
       <i data-lucide="arrow-left" style="width:16px;height:16px"></i> ${t('common.backHome')}
     </a>
 
@@ -58,7 +58,7 @@ function renderCriterion(container: HTMLElement, state: AssessState) {
       <i data-lucide="award" style="width:28px;height:28px;color:var(--primary)"></i>
       ${t('tool.o1Assess')}
     </h1>
-    <p style="color:var(--text-secondary);margin-bottom:24px">${tl({ en: 'Walk through each of the 8 O-1A criteria to assess your case strength.', zh: '逐一走过O-1A的8项标准，评估你的案件强度。' })}</p>
+    <p style="color:var(--text-secondary);margin-bottom:24px">${tl({ en: 'Evaluate your evidence against each of the 8 O-1A criteria.', zh: '逐项对照O-1A的8项标准，评估你的申请实力。' })}</p>
 
     ${renderProgressBar(state.step + 1, o1Criteria.length)}
 
@@ -98,16 +98,16 @@ function renderCriterion(container: HTMLElement, state: AssessState) {
         <h3 style="font-size:16px;font-weight:600;margin:0 0 16px">
           ${tl({ en: 'Do you have evidence for this criterion?', zh: '你有这项标准的证据吗？' })}
         </h3>
-        <div style="display:flex;gap:12px;flex-wrap:wrap">
-          <button class="answer-btn ${currentAnswer === 'yes' ? 'btn-primary' : 'btn-ghost'}" data-answer="yes" style="flex:1;min-width:100px;justify-content:center">
+        <div role="radiogroup" aria-label="${tl({ en: 'Do you have evidence for this criterion?', zh: '你有这项标准的证据吗？' })}" style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="answer-btn ${currentAnswer === 'yes' ? 'btn-primary' : 'btn-ghost'}" data-answer="yes" role="radio" aria-checked="${currentAnswer === 'yes'}" style="flex:1;min-width:100px;justify-content:center">
             <i data-lucide="check" style="width:16px;height:16px"></i>
             ${tl({ en: 'Yes', zh: '是' })}
           </button>
-          <button class="answer-btn ${currentAnswer === 'partially' ? 'btn-primary' : 'btn-ghost'}" data-answer="partially" style="flex:1;min-width:100px;justify-content:center">
+          <button class="answer-btn ${currentAnswer === 'partially' ? 'btn-primary' : 'btn-ghost'}" data-answer="partially" role="radio" aria-checked="${currentAnswer === 'partially'}" style="flex:1;min-width:100px;justify-content:center">
             <i data-lucide="minus" style="width:16px;height:16px"></i>
             ${tl({ en: 'Partially', zh: '部分' })}
           </button>
-          <button class="answer-btn ${currentAnswer === 'no' ? 'btn-primary' : 'btn-ghost'}" data-answer="no" style="flex:1;min-width:100px;justify-content:center">
+          <button class="answer-btn ${currentAnswer === 'no' ? 'btn-primary' : 'btn-ghost'}" data-answer="no" role="radio" aria-checked="${currentAnswer === 'no'}" style="flex:1;min-width:100px;justify-content:center">
             <i data-lucide="x" style="width:16px;height:16px"></i>
             ${tl({ en: 'No', zh: '否' })}
           </button>
@@ -233,7 +233,7 @@ function renderResults(container: HTMLElement, state: AssessState) {
   }).join('');
 
   container.innerHTML = `<div class="fade-in" style="max-width:720px;margin:0 auto;padding:24px 20px 120px">
-    <a href="#/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px;margin-bottom:20px">
+    <a href="/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px;margin-bottom:20px">
       <i data-lucide="arrow-left" style="width:16px;height:16px"></i> ${t('common.backHome')}
     </a>
 
@@ -287,7 +287,7 @@ function renderResults(container: HTMLElement, state: AssessState) {
 
     <!-- Action Buttons -->
     <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">
-      <a href="#/o1-builder" class="btn-primary" style="justify-content:center;font-size:16px">
+      <a href="/o1-builder" class="btn-primary" style="justify-content:center;font-size:16px">
         <i data-lucide="clipboard-check" style="width:18px;height:18px"></i>
         ${tl({ en: 'Build Your Evidence Portfolio', zh: '构建你的证据材料' })}
       </a>
@@ -295,6 +295,25 @@ function renderResults(container: HTMLElement, state: AssessState) {
         <i data-lucide="rotate-ccw" style="width:16px;height:16px"></i>
         ${tl({ en: 'Start Over', zh: '重新评估' })}
       </button>
+    </div>
+
+    <!-- What's Next -->
+    <div style="background:var(--primary-light);border-radius:12px;padding:20px;margin-bottom:20px">
+      <h3 style="font-size:16px;font-weight:600;margin:0 0 12px">${tl({ en: "What's Next?", zh: '下一步' })}</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="/timeline" style="display:flex;align-items:center;gap:8px;font-size:14px">
+          <i data-lucide="calendar-range" style="width:16px;height:16px"></i>
+          ${tl({ en: 'Plan your immigration timeline', zh: '规划你的移民时间线' })}
+        </a>
+        <a href="/employer" style="display:flex;align-items:center;gap:8px;font-size:14px">
+          <i data-lucide="building-2" style="width:16px;height:16px"></i>
+          ${tl({ en: 'Prepare questions for your employer', zh: '准备向雇主提问' })}
+        </a>
+        <a href="/eb-compare" style="display:flex;align-items:center;gap:8px;font-size:14px">
+          <i data-lucide="columns-3" style="width:16px;height:16px"></i>
+          ${tl({ en: 'Compare EB green card categories', zh: '对比EB绿卡类别' })}
+        </a>
+      </div>
     </div>
 
     <div style="text-align:center;font-size:13px;color:var(--text-secondary);margin-bottom:20px">

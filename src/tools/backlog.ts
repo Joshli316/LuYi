@@ -65,7 +65,7 @@ function renderInputSection(container: HTMLElement, state: BacklogState): void {
 
   container.innerHTML = `<div class="fade-in" style="max-width:720px;margin:0 auto;padding:24px 20px 120px">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
-      <a href="#/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px">
+      <a href="/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px">
         <i data-lucide="arrow-left" style="width:16px;height:16px"></i> ${t('common.backHome')}
       </a>
     </div>
@@ -96,7 +96,7 @@ function renderInputSection(container: HTMLElement, state: BacklogState): void {
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           ${categories.map(cat => `
             <label style="flex:1;min-width:80px;cursor:pointer">
-              <input type="radio" name="eb-category" value="${cat.value}" ${state.category === cat.value ? 'checked' : ''} style="display:none">
+              <input type="radio" name="eb-category" value="${cat.value}" ${state.category === cat.value ? 'checked' : ''} style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">
               <div class="card card-hover" style="text-align:center;padding:12px 16px;font-size:16px;font-weight:600;border:2px solid ${state.category === cat.value ? 'var(--primary)' : 'transparent'};transition:border-color 200ms">
                 ${lang === 'en' ? cat.en : cat.zh}
               </div>
@@ -342,6 +342,22 @@ function renderResults(state: BacklogState): void {
       })}</p>
     </div>`;
   }
+
+  // What's Next
+  html += `
+    <div style="background:var(--primary-light);border-radius:12px;padding:20px;margin:20px 0">
+      <h3 style="font-size:16px;font-weight:600;margin:0 0 12px">${tl({ en: "What's Next?", zh: '下一步' })}</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="/timeline" style="display:flex;align-items:center;gap:8px;font-size:14px">
+          <i data-lucide="calendar-range" style="width:16px;height:16px"></i>
+          ${tl({ en: 'Plan your timeline with these dates', zh: '根据这些日期规划你的时间线' })}
+        </a>
+        <a href="/employer" style="display:flex;align-items:center;gap:8px;font-size:14px">
+          <i data-lucide="building-2" style="width:16px;height:16px"></i>
+          ${tl({ en: 'Prepare questions for your employer', zh: '准备向雇主提问' })}
+        </a>
+      </div>
+    </div>`;
 
   // Data source note
   html += `

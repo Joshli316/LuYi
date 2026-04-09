@@ -3,19 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="LuYi 路易 — Free bilingual immigration pathway planner for international students in the US. Discover visa options beyond H-1B, assess eligibility, plan timelines, and avoid scams.">
+  <meta name="description" content="Free bilingual immigration pathway planner for international students. Explore visa options beyond H-1B, assess eligibility, and plan your timeline.">
   <meta name="theme-color" content="#0D9488">
-  <meta property="og:title" content="LuYi 路易 — Path Made Easy">
-  <meta property="og:description" content="Free bilingual immigration pathway planner for international students in the US.">
+  <meta property="og:title" content="Immigration Pathway Planner for International Students | LuYi 路易">
+  <meta property="og:description" content="Free bilingual immigration pathway planner for international students. Explore visa options beyond H-1B, assess eligibility, and plan your timeline.">
   <meta property="og:type" content="website">
-  <title>LuYi 路易 — Path Made Easy</title>
+  <meta property="og:url" content="https://luyi.pages.dev/">
+  <meta property="og:image" content="https://luyi.pages.dev/assets/icons/icon-512.png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Immigration Pathway Planner for International Students | LuYi 路易">
+  <meta name="twitter:description" content="Free bilingual immigration pathway planner for international students. Explore visa options beyond H-1B, assess eligibility, and plan your timeline.">
+  <meta name="twitter:image" content="https://luyi.pages.dev/assets/icons/icon-512.png">
+  <link rel="canonical" href="https://luyi.pages.dev/">
+  <title>Immigration Pathway Planner for International Students | LuYi 路易</title>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "LuYi 路易",
+    "url": "https://luyi.pages.dev/",
+    "description": "Free bilingual immigration pathway planner for international students in the US. 9 tools covering H-1B, O-1, EB categories, green card backlog, and scam prevention.",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "inLanguage": ["en", "zh"]
+  }
+  </script>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com/4"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.js" defer></script>
   <link rel="stylesheet" href="print.css" media="print">
   <style>
     :root {
@@ -42,7 +63,7 @@
       --bg: #111827;
       --surface: #1F2937;
       --text: #F9FAFB;
-      --text-secondary: #9CA3AF;
+      --text-secondary: #D1D5DB;
       --border: #374151;
       --primary-light: #134E4A;
       --accent-light: #78350F;
@@ -100,6 +121,7 @@
       gap: 8px;
     }
     .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-ghost:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
     .card {
       background: var(--surface);
@@ -114,6 +136,10 @@
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
     }
+    .card-hover:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
 
     .badge {
       display: inline-flex;
@@ -121,7 +147,7 @@
       gap: 4px;
       padding: 4px 12px;
       border-radius: 9999px;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 500;
     }
 
@@ -238,6 +264,21 @@
       .comparison-table-wrapper {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        position: relative;
+      }
+      .comparison-table-wrapper::after {
+        content: '';
+        position: sticky;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 32px;
+        background: linear-gradient(to right, transparent, rgba(0,0,0,0.06));
+        pointer-events: none;
+        display: block;
+        float: right;
+        margin-top: -100%;
+        height: 100%;
       }
       .comparison-table td:first-child,
       .comparison-table th:first-child {
@@ -294,6 +335,12 @@
       cursor: pointer;
     }
 
+    summary:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 8px; }
+
+    @media (max-width: 480px) {
+      .pros-cons-grid { grid-template-columns: 1fr !important; }
+    }
+
     .tool-nav { display: none; }
     @media (max-width: 768px) {
       .tool-nav {
@@ -316,12 +363,15 @@
         font-size: 10px;
         color: var(--text-secondary);
         text-decoration: none;
-        padding: 4px;
+        padding: 6px 4px;
         border-radius: 8px;
         min-width: 0;
+        min-height: 44px;
+        justify-content: center;
         flex: 1;
       }
       .tool-nav a.active { color: var(--primary); }
+      .tool-nav a:focus-visible { outline: none; box-shadow: var(--focus-ring); }
       body { padding-bottom: 72px; }
       .disclaimer-bar { bottom: 72px; }
     }
@@ -336,10 +386,5 @@
     <style>#loading-skeleton{opacity:1;transition:opacity 200ms}@keyframes spin{to{transform:rotate(360deg)}}</style>
   </div>
   <script src="app.js" defer></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
-    }
-  </script>
 </body>
 </html>

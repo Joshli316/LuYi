@@ -5,7 +5,9 @@
 
 export type Lang = 'en' | 'zh';
 
-let _currentLang: Lang = 'en';
+let _currentLang: Lang = (() => {
+  try { return (sessionStorage.getItem('luyi-lang') as Lang) || 'en'; } catch { return 'en'; }
+})();
 
 export function currentLang(): Lang {
   return _currentLang;
@@ -14,6 +16,7 @@ export function currentLang(): Lang {
 export function setLang(lang: Lang): void {
   _currentLang = lang;
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  try { sessionStorage.setItem('luyi-lang', lang); } catch { /* private browsing */ }
 }
 
 const strings: Record<string, { en: string; zh: string }> = {
@@ -25,12 +28,12 @@ const strings: Record<string, { en: string; zh: string }> = {
 
   // Home hero
   'home.greeting': {
-    en: "Let's explore your immigration options together.",
-    zh: '让我们一起探索你的移民选择。',
+    en: 'Not sure which visa path fits you? Find out in 5 minutes.',
+    zh: '不确定哪条签证路径适合你？5分钟帮你找到答案。',
   },
   'home.subtitle': {
-    en: 'Free tools to understand your visa pathways, estimate your odds, and plan ahead — no account needed.',
-    zh: '免费工具，帮你了解签证路径、估算概率、提前规划 — 无需注册。',
+    en: '9 free tools based on April 2026 USCIS data — no account needed.',
+    zh: '9个免费工具，基于2026年4月USCIS数据 — 无需注册。',
   },
 
   // Tool names
@@ -46,8 +49,8 @@ const strings: Record<string, { en: string; zh: string }> = {
 
   // Tool descriptions
   'tool.pathway.desc': {
-    en: 'Discover which visa paths fit your situation.',
-    zh: '发现适合你情况的签证路径。',
+    en: 'Answer 5 questions, get a personalized visa plan.',
+    zh: '回答5个问题，获得你的个性化签证方案。',
   },
   'tool.h1b.desc': {
     en: 'Estimate your H-1B lottery selection chances.',
@@ -85,7 +88,7 @@ const strings: Record<string, { en: string; zh: string }> = {
   // Shared
   'common.backHome': { en: 'Back to Home', zh: '返回首页' },
   'common.disclaimer': {
-    en: 'This is for educational purposes only. This is not legal advice. Consult a qualified immigration attorney.',
+    en: 'For educational purposes only — not legal advice. Always consult a qualified immigration attorney.',
     zh: '本工具仅供教育参考，不构成法律建议。请咨询合格的移民律师。',
   },
   'common.lastUpdated': { en: 'Last updated: April 2026', zh: '最后更新：2026年4月' },
@@ -93,6 +96,14 @@ const strings: Record<string, { en: string; zh: string }> = {
 
   // Dark mode
   'darkMode.toggle': { en: 'Toggle dark mode', zh: '切换深色模式' },
+
+  // Home
+  'home.startHere': { en: 'Find your best path', zh: '找到最适合你的路径' },
+
+  // 404
+  'notFound.title': { en: 'Page Not Found', zh: '页面未找到' },
+  'notFound.message': { en: "We couldn't find that page. It may have moved or doesn't exist.", zh: '我们找不到该页面，它可能已被移动或不存在。' },
+  'notFound.backHome': { en: 'Back to Home', zh: '返回首页' },
 
   // Mobile nav
   'nav.pathway': { en: 'Pathway', zh: '路径' },

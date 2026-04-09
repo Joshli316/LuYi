@@ -260,7 +260,7 @@ function renderForm(container: HTMLElement, state: TimelineState) {
 
   container.innerHTML = `<div class="fade-in" style="max-width:640px;margin:0 auto;padding:24px 20px 120px">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
-      <a href="#/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px">
+      <a href="/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px">
         <i data-lucide="arrow-left" style="width:16px;height:16px"></i> ${t('common.backHome')}
       </a>
     </div>
@@ -275,7 +275,7 @@ function renderForm(container: HTMLElement, state: TimelineState) {
       <div style="margin-bottom:20px">
         <label style="display:block;font-weight:600;margin-bottom:8px;font-size:15px">${tl({ en: 'Expected Graduation Date', zh: '预计毕业日期' })}</label>
         <input type="month" id="tl-grad-date" value="${state.graduationDate}" min="${new Date().toISOString().slice(0,7)}" style="font-size:16px">
-        <div id="tl-grad-date-error" style="display:none;color:var(--danger);font-size:14px;margin-top:8px"></div>
+        <div id="tl-grad-date-error" class="tl-field-error" style="display:none;color:var(--danger);font-size:14px;margin-top:8px"></div>
       </div>
 
       <!-- Year in School -->
@@ -285,6 +285,7 @@ function renderForm(container: HTMLElement, state: TimelineState) {
           <option value="">${tl({ en: 'Select...', zh: '请选择...' })}</option>
           ${yearOptions.map(o => `<option value="${o.v}" ${state.yearInSchool === o.v ? 'selected' : ''}>${lang === 'en' ? o.en : o.zh}</option>`).join('')}
         </select>
+        <div id="tl-year-error" class="tl-field-error" style="display:none;color:var(--danger);font-size:14px;margin-top:8px"></div>
       </div>
 
       <!-- Degree Level -->
@@ -294,6 +295,7 @@ function renderForm(container: HTMLElement, state: TimelineState) {
           <option value="">${tl({ en: 'Select...', zh: '请选择...' })}</option>
           ${degreeOptions.map(o => `<option value="${o.v}" ${state.degreeLevel === o.v ? 'selected' : ''}>${lang === 'en' ? o.en : o.zh}</option>`).join('')}
         </select>
+        <div id="tl-degree-error" class="tl-field-error" style="display:none;color:var(--danger);font-size:14px;margin-top:8px"></div>
       </div>
 
       <!-- Field Type -->
@@ -309,6 +311,7 @@ function renderForm(container: HTMLElement, state: TimelineState) {
             <span style="font-size:15px">${tl({ en: 'Non-STEM', zh: '非STEM' })}</span>
           </label>
         </div>
+        <div id="tl-field-error" class="tl-field-error" style="display:none;color:var(--danger);font-size:14px;margin-top:8px"></div>
       </div>
 
       <!-- Target Pathway -->
@@ -356,12 +359,22 @@ function renderForm(container: HTMLElement, state: TimelineState) {
   // Generate button
   document.getElementById('tl-generate')?.addEventListener('click', () => {
     // Validate required fields
-    // Clear any previous graduation date error
-    const gradError = document.getElementById('tl-grad-date-error');
-    if (gradError) { gradError.style.display = 'none'; gradError.textContent = ''; }
+    // Clear previous validation errors
+    const clearErrors = () => {
+      container.querySelectorAll('.tl-field-error').forEach(el => {
+        (el as HTMLElement).style.display = 'none';
+        el.textContent = '';
+      });
+    };
+    clearErrors();
+
+    const showFieldError = (fieldId: string, msg: string) => {
+      const el = document.getElementById(fieldId);
+      if (el) { el.textContent = msg; el.style.display = 'block'; }
+    };
 
     if (!state.graduationDate) {
-      alert(tl({ en: 'Please select your graduation date.', zh: '请选择毕业日期。' }));
+      showFieldError('tl-grad-date-error', tl({ en: 'Please select your graduation date.', zh: '请选择毕业日期。' }));
       return;
     }
 
@@ -371,23 +384,20 @@ function renderForm(container: HTMLElement, state: TimelineState) {
     const currentYear = now.getFullYear();
     const currentMonth = now.getMonth() + 1; // 1-based
     if (gradY < currentYear || (gradY === currentYear && gradM <= currentMonth)) {
-      if (gradError) {
-        gradError.textContent = tl({ en: 'Graduation date must be in the future.', zh: '毕业日期必须是未来的日期。' });
-        gradError.style.display = 'block';
-      }
+      showFieldError('tl-grad-date-error', tl({ en: 'Graduation date must be in the future.', zh: '毕业日期必须是未来的日期。' }));
       return;
     }
 
     if (!state.yearInSchool) {
-      alert(tl({ en: 'Please select your current year in school.', zh: '请选择当前年级。' }));
+      showFieldError('tl-year-error', tl({ en: 'Please select your current year in school.', zh: '请选择当前年级。' }));
       return;
     }
     if (!state.degreeLevel) {
-      alert(tl({ en: 'Please select your degree level.', zh: '请选择学位等级。' }));
+      showFieldError('tl-degree-error', tl({ en: 'Please select your degree level.', zh: '请选择学位等级。' }));
       return;
     }
     if (!state.fieldType) {
-      alert(tl({ en: 'Please select your field type.', zh: '请选择专业类型。' }));
+      showFieldError('tl-field-error', tl({ en: 'Please select your field type.', zh: '请选择专业类型。' }));
       return;
     }
     state.generated = true;
@@ -468,7 +478,7 @@ function renderResults(container: HTMLElement, state: TimelineState) {
 
   container.innerHTML = `<div class="fade-in" style="max-width:640px;margin:0 auto;padding:24px 20px 120px">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
-      <a href="#/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px">
+      <a href="/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px">
         <i data-lucide="arrow-left" style="width:16px;height:16px"></i> ${t('common.backHome')}
       </a>
     </div>

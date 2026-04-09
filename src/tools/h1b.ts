@@ -1,6 +1,7 @@
 import { t, tl, currentLang } from '../i18n';
 import { h1bRates, wageWeights, h1bCapStructure } from '../data/h1b-rates';
 import { renderDisclaimer, activateIcons } from '../utils/ui';
+import { saveState, loadState } from '../utils/storage';
 
 function fmt(n: number): string {
   return n.toLocaleString('en-US');
@@ -53,10 +54,13 @@ function calculate(degree: string, wageLevel: number): { probability: number; me
   return { probability: Math.round(prob * 10) / 10, message };
 }
 
+interface H1BState { degree: string; wageLevel: number; }
+
 export function renderH1B(container: HTMLElement): void {
   const lang = currentLang();
-  let degree = 'bachelors';
-  let wageLevel = 1;
+  const saved = loadState<H1BState>('h1b');
+  let degree = saved?.degree ?? 'bachelors';
+  let wageLevel = saved?.wageLevel ?? 1;
 
   function render() {
     const result = calculate(degree, wageLevel);
@@ -65,7 +69,7 @@ export function renderH1B(container: HTMLElement): void {
     const wageOptions = wageWeights.map(w => {
       const desc = lang === 'en' ? w.description : w.descriptionZh;
       return `<option value="${w.level}" ${wageLevel === w.level ? 'selected' : ''}>
-        ${tl({ en: `Level ${w.level}`, zh: `级别${w.level}` })} — ${desc} (${w.entries}x ${tl({ en: 'entries', zh: '投入' })})
+        ${tl({ en: `Level ${w.level}`, zh: `级别${w.level}` })} — ${desc} (${w.entries}x ${tl({ en: 'entries', zh: '次抽签' })})
       </option>`;
     }).join('');
 
@@ -79,7 +83,7 @@ export function renderH1B(container: HTMLElement): void {
       </tr>`).join('');
 
     container.innerHTML = `<div class="fade-in" style="max-width:720px;margin:0 auto;padding:24px 20px 120px">
-      <a href="#/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px;margin-bottom:20px">
+      <a href="/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px;margin-bottom:20px">
         <i data-lucide="arrow-left" style="width:16px;height:16px"></i> ${t('common.backHome')}
       </a>
 
@@ -202,9 +206,9 @@ export function renderH1B(container: HTMLElement): void {
           </h3>
           <ul style="margin:0;padding-left:20px;font-size:14px;color:var(--text-secondary);line-height:1.8">
             <li><strong>${tl({ en: 'STEM OPT Extension', zh: 'STEM OPT延期' })}</strong> — ${tl({ en: 'If STEM field, get 24 extra months (3 lottery attempts total)', zh: 'STEM专业可获额外24个月（共3次抽签机会）' })}</li>
-            <li><strong>${tl({ en: 'O-1 Visa', zh: 'O-1签证' })}</strong> — ${tl({ en: 'No lottery, no cap. ~92-94% approval rate.', zh: '无需抽签，无配额限制。批准率约92-94%。' })} <a href="#/o1-assess">${tl({ en: 'Start Assessment', zh: '开始评估' })} →</a></li>
+            <li><strong>${tl({ en: 'O-1 Visa', zh: 'O-1签证' })}</strong> — ${tl({ en: 'No lottery, no cap. ~92-94% approval rate.', zh: '无需抽签，无配额限制。批准率约92-94%。' })} <a href="/o1-assess">${tl({ en: 'Start Assessment', zh: '开始评估' })} →</a></li>
             <li><strong>${tl({ en: 'Cap-Exempt Employers', zh: '免配额雇主' })}</strong> — ${tl({ en: 'Universities, nonprofits, and government research orgs skip the lottery entirely', zh: '大学、非营利组织和政府研究机构完全免于抽签' })}</li>
-            <li><strong>${tl({ en: 'EB-2 NIW', zh: 'EB-2 NIW' })}</strong> — ${tl({ en: 'Self-petition green card with no employer needed', zh: '无需雇主的自行申请绿卡' })} <a href="#/eb-compare">${tl({ en: 'Compare EB', zh: '对比EB类别' })} →</a></li>
+            <li><strong>${tl({ en: 'EB-2 NIW', zh: 'EB-2 NIW' })}</strong> — ${tl({ en: 'Self-petition green card with no employer needed', zh: '无需雇主的自行申请绿卡' })} <a href="/eb-compare">${tl({ en: 'Compare EB', zh: '对比EB类别' })} →</a></li>
           </ul>
         </div>
 
@@ -231,9 +235,28 @@ export function renderH1B(container: HTMLElement): void {
           <p style="font-size:14px;color:var(--text-secondary);margin:0;line-height:1.7">
             ${tl({
               en: 'Starting FY2027, USCIS will implement a wage-based weighted lottery system. Higher wage levels receive more lottery entries: Level 1 gets 1 entry, Level 2 gets 2, Level 3 gets 3, and Level 4 gets 4 entries. This significantly improves odds for higher-paid positions while reducing chances for entry-level roles. The goal is to prioritize positions that demonstrate genuine specialty occupation need.',
-              zh: '从FY2027起，USCIS将实施基于工资的加权抽签制度。更高的工资等级获得更多的抽签投入：级别1获1次投入，级别2获2次，级别3获3次，级别4获4次。这大幅提高了高薪职位的中签概率，同时降低了入门级职位的机会。目的是优先考虑真正体现专业职业需求的职位。',
+              zh: '从FY2027起，USCIS将实施基于工资的加权抽签制度。更高的工资等级获得更多的抽签机会：级别1获1次抽签，级别2获2次，级别3获3次，级别4获4次。这大幅提高了高薪职位的中签概率，同时降低了入门级职位的机会。目的是优先考虑真正体现专业职业需求的职位。',
             })}
           </p>
+        </div>
+      </div>
+
+      <!-- What's Next -->
+      <div style="background:var(--primary-light);border-radius:12px;padding:20px;margin-bottom:20px">
+        <h3 style="font-size:16px;font-weight:600;margin:0 0 12px">${tl({ en: "What's Next?", zh: '下一步' })}</h3>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <a href="/o1-assess" style="display:flex;align-items:center;gap:8px;font-size:14px">
+            <i data-lucide="award" style="width:16px;height:16px"></i>
+            ${tl({ en: 'Check if you qualify for O-1 (no lottery needed)', zh: '看看你是否符合O-1（无需抽签）' })}
+          </a>
+          <a href="/eb-compare" style="display:flex;align-items:center;gap:8px;font-size:14px">
+            <i data-lucide="columns-3" style="width:16px;height:16px"></i>
+            ${tl({ en: 'Compare EB green card categories', zh: '对比EB绿卡类别' })}
+          </a>
+          <a href="/timeline" style="display:flex;align-items:center;gap:8px;font-size:14px">
+            <i data-lucide="calendar-range" style="width:16px;height:16px"></i>
+            ${tl({ en: 'Plan your immigration timeline', zh: '规划你的移民时间线' })}
+          </a>
         </div>
       </div>
 
@@ -249,6 +272,7 @@ export function renderH1B(container: HTMLElement): void {
     container.querySelectorAll('input[name="degree"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
         degree = (e.target as HTMLInputElement).value;
+        saveState('h1b', { degree, wageLevel });
         render();
       });
     });
@@ -256,6 +280,7 @@ export function renderH1B(container: HTMLElement): void {
     // Bind wage level select
     document.getElementById('wage-select')?.addEventListener('change', (e) => {
       wageLevel = parseInt((e.target as HTMLSelectElement).value, 10);
+      saveState('h1b', { degree, wageLevel });
       render();
     });
   }

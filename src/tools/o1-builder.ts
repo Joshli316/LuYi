@@ -126,7 +126,7 @@ function render(container: HTMLElement, state: BuilderState) {
   }).join('');
 
   container.innerHTML = `<div class="fade-in" style="max-width:720px;margin:0 auto;padding:24px 20px 120px">
-    <a href="#/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px;margin-bottom:20px">
+    <a href="/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px;margin-bottom:20px">
       <i data-lucide="arrow-left" style="width:16px;height:16px"></i> ${t('common.backHome')}
     </a>
 
@@ -161,7 +161,7 @@ function render(container: HTMLElement, state: BuilderState) {
 
     <!-- Link to assessment -->
     <div style="text-align:center;margin-top:24px">
-      <a href="#/o1-assess" class="btn-ghost" style="font-size:14px">
+      <a href="/o1-assess" class="btn-ghost" style="font-size:14px">
         <i data-lucide="award" style="width:16px;height:16px"></i>
         ${tl({ en: 'Take the O-1 Self-Assessment', zh: '进行O-1自我评估' })}
       </a>

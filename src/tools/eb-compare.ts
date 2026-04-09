@@ -135,9 +135,9 @@ export function renderEBCompare(container: HTMLElement): void {
             </ul>
           </div>
           <div>
-            <h4 style="font-size:13px;font-weight:600;color:var(--danger);margin:0 0 8px;display:flex;align-items:center;gap:6px">
-              <i data-lucide="thumbs-down" style="width:14px;height:14px"></i>
-              ${tl({ en: 'Cons', zh: '劣势' })}
+            <h4 style="font-size:13px;font-weight:600;color:var(--warning);margin:0 0 8px;display:flex;align-items:center;gap:6px">
+              <i data-lucide="alert-triangle" style="width:14px;height:14px"></i>
+              ${tl({ en: 'Considerations', zh: '注意事项' })}
             </h4>
             <ul style="margin:0;padding-left:18px;font-size:13px;color:var(--text-secondary);line-height:1.7">
               ${cons.map(c => `<li>${c}</li>`).join('')}
@@ -150,7 +150,7 @@ export function renderEBCompare(container: HTMLElement): void {
 
   container.innerHTML = `<div class="fade-in" style="max-width:960px;margin:0 auto;padding:24px 20px 120px">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
-      <a href="#/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px">
+      <a href="/" style="color:var(--text-secondary);display:flex;align-items:center;gap:4px;font-size:14px">
         <i data-lucide="arrow-left" style="width:16px;height:16px"></i> ${t('common.backHome')}
       </a>
     </div>
@@ -183,7 +183,7 @@ export function renderEBCompare(container: HTMLElement): void {
       <i data-lucide="book-open" style="width:22px;height:22px;color:var(--primary)"></i>
       ${tl({ en: 'Category Details', zh: '类别详情' })}
     </h2>
-    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:16px">${tl({ en: 'Click each category to see full description, pros, and cons.', zh: '点击各类别查看完整说明、优势和劣势。' })}</p>
+    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:16px">${tl({ en: 'Click each category to see full description, pros, and considerations.', zh: '点击各类别查看完整说明、优势和注意事项。' })}</p>
     <div style="display:grid;gap:12px;margin-bottom:32px">
       ${detailCardsHtml}
     </div>
