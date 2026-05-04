@@ -114,7 +114,7 @@ function renderShell(): void {
       display: flex; align-items: center; justify-content: space-between;
     ">
       <div style="display: flex; align-items: center; gap: 12px;">
-        <a href="https://yi-suite.pages.dev/" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:12px;color:var(--text-secondary);border:1px solid var(--border);border-radius:9999px;text-decoration:none;" aria-label="Back to Yi 易 — family of tools for international students">
+        <a href="https://yi-1ot.pages.dev/" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:12px;color:var(--text-secondary);border:1px solid var(--border);border-radius:9999px;text-decoration:none;" aria-label="Back to Yi 易 — family of tools for international students">
           <span aria-hidden="true">←</span>&nbsp;Yi 易
         </a>
         <a href="/" id="logo-link" style="
