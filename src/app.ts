@@ -113,15 +113,20 @@ function renderShell(): void {
       padding: 12px 20px;
       display: flex; align-items: center; justify-content: space-between;
     ">
-      <a href="/" id="logo-link" style="
-        display: flex; align-items: center; gap: 8px;
-        text-decoration: none; color: var(--text);
-      ">
-        <i data-lucide="compass" style="width: 28px; height: 28px; color: var(--primary);"></i>
-        <span style="font-size: 20px; font-weight: 700;">
-          <span style="color: var(--primary);">路易</span> LuYi
-        </span>
-      </a>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="https://yi-suite.pages.dev/" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:12px;color:var(--text-secondary);border:1px solid var(--border);border-radius:9999px;text-decoration:none;" aria-label="Back to Yi 易 — family of tools for international students">
+          <span aria-hidden="true">←</span>&nbsp;Yi 易
+        </a>
+        <a href="/" id="logo-link" style="
+          display: flex; align-items: center; gap: 8px;
+          text-decoration: none; color: var(--text);
+        ">
+          <i data-lucide="compass" style="width: 28px; height: 28px; color: var(--primary);"></i>
+          <span style="font-size: 20px; font-weight: 700;">
+            <span style="color: var(--primary);">路易</span> LuYi
+          </span>
+        </a>
+      </div>
       <div style="display: flex; align-items: center; gap: 8px;">
         <button id="lang-toggle-btn" aria-label="Toggle language" style="
           background: var(--primary-light); color: var(--primary-dark);
